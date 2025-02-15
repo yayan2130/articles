@@ -1,0 +1,130 @@
+{
+	"info": {
+		"_postman_id": "92326c19-51d2-4682-a953-e3316f097d7f",
+		"name": "article",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "15660593"
+	},
+	"item": [
+		{
+			"name": "POST/article",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"Judul PUANJAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAANG\",\r\n    \"content\": \"Ini adalah isi artikel yang sangat panjang, lebih dari 200 karakter. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum at aliquam quam, a laoreet sapien. Sed euismod eros eu urna accumsan, id commodo dolor efficitur. Duis vel metus lacus.\",\r\n    \"category\": \"Tech\",\r\n    \"status\": \"publish\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "text"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/article/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"article",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET/article/:id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/article/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"article",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET/article/list/:limit/:offset",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/article/list/10/0",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"article",
+						"list",
+						"10",
+						"0"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUT/article/:id",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"Judul PUANJAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAANG\",\r\n    \"content\": \"Ini adalah isi artikel yang sangat panjang, lebih dari 200 karakter. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum at aliquam quam, a laoreet sapien. Sed euismod eros eu urna accumsan, id commodo dolor efficitur. Duis vel metus lacus.\",\r\n    \"category\": \"Tech\",\r\n    \"status\": \"publish\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "text"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/article/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"article",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE/article/:id",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/article/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"article",
+						"1"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
