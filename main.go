@@ -1,23 +1,37 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
-
 	"article/config"
 	"article/routes"
+	"time"
+
+	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	// Pastikan mode diatur agar tidak ada warning (opsional)
-	gin.SetMode(gin.DebugMode) // atau gin.ReleaseMode jika di produksi
-	
-	// Panggil koneksi database sebelum router dijalankan
+	gin.SetMode(gin.DebugMode) // Ubah ke gin.ReleaseMode di produksi
+
+	// Koneksi database
 	config.ConnectDatabase()
 
-	// Panggil router dari routes.go
-	r := routes.SetupRouter()
+	// Inisialisasi router
+	r := gin.Default()
 
-	// Jalankan server di port 8080
+	// Middleware CORS
+	r.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"http://localhost:3000"}, // Next.js
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},
+		AllowHeaders:     []string{"Content-Type", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	}))
+
+	// Daftarkan routes
+	routes.SetupRouter(r)
+
+	// Jalankan server
 	err := r.Run(":8080")
 	if err != nil {
 		panic("Server gagal berjalan: " + err.Error())

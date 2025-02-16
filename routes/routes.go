@@ -6,15 +6,13 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func SetupRouter() *gin.Engine {
-	r := gin.Default()
-
-	// Perbaiki rute agar tidak konflik
-	r.POST("/article", controllers.CreateArticle)
-	r.GET("/article/:id", controllers.GetArticleByID)
-	r.GET("/article/list/:limit/:offset", controllers.GetArticles)
-	r.PUT("/article/:id", controllers.UpdateArticle)
-	r.DELETE("/article/:id", controllers.DeleteArticle)
-
-	return r
+func SetupRouter(r *gin.Engine) {
+	articleRoutes := r.Group("/article")
+	{
+		articleRoutes.POST("/", controllers.CreateArticle)
+		articleRoutes.GET("/list/:limit/:offset", controllers.GetArticles)
+		articleRoutes.GET("/:id", controllers.GetArticleByID)
+		articleRoutes.PUT("/:id", controllers.UpdateArticle)
+		articleRoutes.DELETE("/:id", controllers.DeleteArticle)
+	}
 }

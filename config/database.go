@@ -8,19 +8,16 @@ import (
 	"gorm.io/gorm"
 )
 
-// DB variable to be used in controllers
 var DB *gorm.DB
 
 func ConnectDatabase() {
-	fmt.Println("🔄 Connecting to database...")
-
-	dsn := "root:@tcp(127.0.0.1:3306)/article?charset=utf8mb4&parseTime=True&loc=Local"
-	database, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	dsn := "root:@tcp(127.0.0.1:3306)/article?charset=utf8mb4&parseTime=True&loc=Local" // Sesuaikan dengan XAMPP kamu
+	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 
 	if err != nil {
-		log.Fatal("❌ Database connection failed: ", err)
+		log.Fatal("Gagal terhubung ke database:", err)
 	}
 
-	DB = database
-	fmt.Println("✅ Database connected successfully")
+	DB = db
+	fmt.Println("Database berhasil terhubung! 🚀")
 }

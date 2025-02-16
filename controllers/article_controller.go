@@ -7,12 +7,8 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator/v10"
 )
 
-var validate = validator.New()
-
-// Membuat artikel baru
 func CreateArticle(c *gin.Context) {
 	var article models.Posts
 	if err := c.ShouldBindJSON(&article); err != nil {
@@ -20,45 +16,60 @@ func CreateArticle(c *gin.Context) {
 		return
 	}
 
-	// Validasi input
-	if err := validate.Struct(article); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	config.DB.Create(&article)
+	c.JSON(http.StatusCreated, article)
+}
+
+func GetArticles(c *gin.Context) {
+	// Ambil limit & offset dari path parameter (bukan dari query)
+	limit, err1 := strconv.Atoi(c.Param("limit"))
+	offset, err2 := strconv.Atoi(c.Param("offset"))
+	status := c.Query("status") // Ambil status dari query parameter (opsional)
+
+	// Jika limit atau offset tidak valid, beri error
+	if err1 != nil || err2 != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Limit dan offset harus angka"})
 		return
 	}
 
-	config.DB.Create(&article)
-	c.JSON(http.StatusCreated, gin.H{"message": "Article created successfully"})
-}
-
-// Menampilkan semua artikel dengan pagination
-func GetArticles(c *gin.Context) {
-	limit, _ := strconv.Atoi(c.Param("limit"))
-	offset, _ := strconv.Atoi(c.Param("offset"))
-
 	var articles []models.Posts
-	config.DB.Limit(limit).Offset(offset).Find(&articles)
+	query := config.DB.Limit(limit).Offset(offset)
+
+	// Jika ada filter status, tambahkan ke query
+	if status != "" {
+		query = query.Where("status = ?", status)
+	}
+
+	result := query.Find(&articles)
+
+	if result.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
+		return
+	}
 
 	c.JSON(http.StatusOK, articles)
 }
 
-// Menampilkan satu artikel berdasarkan ID
+
+
 func GetArticleByID(c *gin.Context) {
 	id := c.Param("id")
 	var article models.Posts
+
 	if err := config.DB.First(&article, id).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Article not found"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "Artikel tidak ditemukan"})
 		return
 	}
+
 	c.JSON(http.StatusOK, article)
 }
 
-// Mengupdate artikel berdasarkan ID
 func UpdateArticle(c *gin.Context) {
 	id := c.Param("id")
 	var article models.Posts
 
 	if err := config.DB.First(&article, id).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Article not found"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "Artikel tidak ditemukan"})
 		return
 	}
 
@@ -67,21 +78,18 @@ func UpdateArticle(c *gin.Context) {
 		return
 	}
 
-	if err := validate.Struct(article); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
 	config.DB.Save(&article)
-	c.JSON(http.StatusOK, gin.H{"message": "Article updated successfully"})
+	c.JSON(http.StatusOK, article)
 }
 
-// Menghapus artikel berdasarkan ID
 func DeleteArticle(c *gin.Context) {
 	id := c.Param("id")
-	if err := config.DB.Delete(&models.Posts{}, id).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete article"})
+	result := config.DB.Delete(&models.Posts{}, id)
+
+	if result.RowsAffected == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Artikel tidak ditemukan"})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "Article deleted successfully"})
+
+	c.JSON(http.StatusOK, gin.H{"message": "Artikel berhasil dihapus"})
 }
